@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Upload, MessageCircle, Search, Download, FileText, Users, ChevronLeft, X, Filter, User, Terminal, Key, Database, ArrowRight, CheckCircle, Copy, Image as ImageIcon, FileCode } from 'lucide-react'
 import { parseFile } from './utils/parser'
+import { parseDbFile, isEncryptedDb } from './utils/db-parser'
 import { decryptDatImage } from './utils/media'
 import { exportSessionToHtml } from './utils/exporter'
 import { formatMessageTime, formatSessionTime } from './utils/date'
@@ -16,6 +17,7 @@ function App() {
   const [dragActive, setDragActive] = useState(false)
   const [messageFilter, setMessageFilter] = useState<'all' | 'self' | 'other'>('all')
   const [viewMode, setViewMode] = useState<ViewMode>('home')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [mediaMap, setMediaMap] = useState<Record<string, string>>({})
   const mediaMapRef = useRef<Record<string, string>>({})
@@ -44,6 +46,8 @@ function App() {
     if (!files || files.length === 0) return
     
     setIsLoading(true)
+    setErrorMessage(null)
+    
     try {
       const results: ParsedData = {
         sessions: [],
@@ -54,7 +58,7 @@ function App() {
       const newMediaMap: Record<string, string> = { ...mediaMap }
       const filesArray = Array.from(files)
       
-      // First pass: handle media files
+      // First pass: handle media files (.dat)
       for (const file of filesArray) {
         if (file.name.toLowerCase().endsWith('.dat')) {
           const buffer = new Uint8Array(await file.arrayBuffer())
@@ -62,7 +66,6 @@ function App() {
           if (decrypted) {
             const url = URL.createObjectURL(decrypted.blob)
             newMediaMap[file.name] = url
-            // Also map by stem (filename without extension)
             const stem = file.name.substring(0, file.name.lastIndexOf('.'))
             newMediaMap[stem] = url
           }
@@ -71,9 +74,33 @@ function App() {
       
       setMediaMap(newMediaMap)
 
-      // Second pass: handle data files
+      // Second pass: handle data files (.db, .json, .csv, .txt)
       for (const file of filesArray) {
-        if (!file.name.toLowerCase().endsWith('.dat')) {
+        const fileName = file.name.toLowerCase()
+        
+        if (fileName.endsWith('.dat')) {
+          continue // Already handled
+        }
+        
+        if (fileName.endsWith('.db')) {
+          // Handle SQLite database file
+          const buffer = await file.arrayBuffer()
+          
+          if (isEncryptedDb(buffer)) {
+            setErrorMessage(`文件 "${file.name}" 是加密的数据库。\n请先使用 Python 脚本解密，或上传已解密的 *_decrypted.db 文件。`)
+            continue
+          }
+          
+          try {
+            const parsed = await parseDbFile(buffer)
+            results.sessions.push(...parsed.sessions)
+            results.totalMessages += parsed.totalMessages
+            results.parseTime += parsed.parseTime
+          } catch (e) {
+            setErrorMessage(`解析数据库失败: ${e instanceof Error ? e.message : '未知错误'}`)
+          }
+        } else {
+          // Handle JSON, CSV, TXT files
           const parsed = await parseFile(file)
           results.sessions.push(...parsed.sessions)
           results.totalMessages += parsed.totalMessages
@@ -97,6 +124,7 @@ function App() {
       }
     } catch (error) {
       console.error('Error parsing file:', error)
+      setErrorMessage(`解析失败: ${error instanceof Error ? error.message : '未知错误'}`)
     } finally {
       setIsLoading(false)
     }
@@ -505,7 +533,7 @@ function App() {
               {dragActive ? '松开以上传文件' : '拖拽文件到此处'}
             </p>
             <p className="text-sm text-muted-foreground mb-4">
-              支持 JSON、CSV、TXT、DAT 格式
+              支持 DB、JSON、CSV、TXT、DAT 格式
             </p>
             <label className="btn-primary cursor-pointer">
               <FileText className="w-4 h-4" />
@@ -513,7 +541,7 @@ function App() {
               <input
                 type="file"
                 className="hidden"
-                accept=".json,.csv,.txt,.dat"
+                accept=".db,.json,.csv,.txt,.dat"
                 multiple
                 onChange={(e) => handleFileUpload(e.target.files)}
               />
@@ -545,6 +573,7 @@ function App() {
               支持的数据格式
             </h3>
             <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• <strong>DB:</strong> 已解密的 SQLite 数据库文件 (*_decrypted.db)</li>
               <li>• <strong>JSON:</strong> 解密脚本导出的 chat_records.json</li>
               <li>• <strong>CSV:</strong> 包含消息内容、发送者、时间的表格</li>
               <li>• <strong>TXT:</strong> 纯文本对话记录</li>
@@ -556,6 +585,18 @@ function App() {
             <div className="mt-6 flex items-center justify-center gap-2 text-primary">
               <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               <span>正在解析...</span>
+            </div>
+          )}
+          
+          {errorMessage && (
+            <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400 text-sm whitespace-pre-line">
+              <div className="flex items-start gap-2">
+                <X className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-medium mb-1">解析失败</div>
+                  {errorMessage}
+                </div>
+              </div>
             </div>
           )}
         </div>
