@@ -1,13 +1,14 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
-import { Upload, MessageCircle, Search, Download, FileText, Users, ChevronLeft, X, Filter, User, Terminal, Key, Database, ArrowRight, CheckCircle, Copy, Image as ImageIcon, FileCode } from 'lucide-react'
+import { Upload, MessageCircle, Search, Download, FileText, Users, ChevronLeft, X, Filter, User, Terminal, Key, Database, ArrowRight, CheckCircle, Copy, Image as ImageIcon, FileCode, BookOpen } from 'lucide-react'
 import { parseFile } from './utils/parser'
 import { parseDbFile, isEncryptedDb } from './utils/db-parser'
 import { decryptDatImage } from './utils/media'
 import { exportSessionToHtml } from './utils/exporter'
 import { formatMessageTime, formatSessionTime } from './utils/date'
 import type { ParsedData, ChatSession } from './types'
+import { TutorialPage } from './components/TutorialPage'
 
-type ViewMode = 'home' | 'guide' | 'viewer'
+type ViewMode = 'home' | 'guide' | 'tutorial' | 'viewer'
 
 function App() {
   const [data, setData] = useState<ParsedData | null>(null)
@@ -481,13 +482,20 @@ function App() {
         </div>
 
         {/* CTA */}
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-4">
           <button
             onClick={() => setViewMode('home')}
             className="btn-primary text-lg px-8 py-3"
           >
             导入解密后的文件
             <ArrowRight className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => setViewMode('tutorial')}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+          >
+            <BookOpen className="w-4 h-4" />
+            想深入了解原理？查看完整技术教程
           </button>
         </div>
       </div>
@@ -497,6 +505,16 @@ function App() {
   // Home/Upload screen
   if (viewMode === 'guide') {
     return <DecryptGuide />
+  }
+
+  if (viewMode === 'tutorial') {
+    return (
+      <TutorialPage
+        onBack={() => setViewMode('home')}
+        onCopyCommand={copyCommand}
+        copiedCommand={copiedCommand}
+      />
+    )
   }
 
   if (!data) {
@@ -551,7 +569,7 @@ function App() {
           {/* Decrypt Guide Button */}
           <button
             onClick={() => setViewMode('guide')}
-            className="w-full mb-6 p-4 rounded-xl border border-border bg-gradient-to-r from-accent to-muted hover:border-primary/50 transition-all text-left flex items-center gap-4"
+            className="w-full mb-3 p-4 rounded-xl border border-border bg-gradient-to-r from-accent to-muted hover:border-primary/50 transition-all text-left flex items-center gap-4"
           >
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
               <Key className="w-6 h-6 text-primary" />
@@ -562,7 +580,26 @@ function App() {
                 <ArrowRight className="w-4 h-4 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground">
-                查看详细的解密步骤和使用教程
+                查看解密步骤和快速开始指南
+              </p>
+            </div>
+          </button>
+
+          {/* Full Tutorial Button */}
+          <button
+            onClick={() => setViewMode('tutorial')}
+            className="w-full mb-6 p-4 rounded-xl border border-border hover:border-primary/30 transition-all text-left flex items-center gap-4"
+          >
+            <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-muted-foreground" />
+            </div>
+            <div className="flex-1">
+              <div className="font-medium flex items-center gap-2">
+                完整技术教程
+                <ArrowRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                深入理解加密原理、密钥提取和脚本实现
               </p>
             </div>
           </button>
