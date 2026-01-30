@@ -1,5 +1,19 @@
-import { ChatSession, ChatMessage } from '../types';
+import { ChatSession } from '../types';
 import { formatMessageTime } from './date';
+
+/**
+ * Escapes HTML special characters to prevent XSS attacks.
+ */
+const escapeHtml = (text: string): string => {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, char => map[char]);
+};
 
 /**
  * Generates a self-contained HTML file for a chat session.
@@ -15,17 +29,17 @@ export const exportSessionToHtml = (session: ChatSession): string => {
       return `
         ${timeHtml}
         <div class="system-msg">
-          <span>${msg.content}</span>
+          <span>${escapeHtml(msg.content)}</span>
         </div>
       `;
     }
 
     const bubbleClass = msg.isSelf ? 'bubble-self' : 'bubble-other';
     const alignClass = msg.isSelf ? 'msg-self' : 'msg-other';
-    const avatarChar = msg.senderName.charAt(0);
-    const senderNameHtml = !msg.isSelf ? `<div class="sender-name">${msg.senderName}</div>` : '';
+    const avatarChar = escapeHtml(msg.senderName.charAt(0));
+    const senderNameHtml = !msg.isSelf ? `<div class="sender-name">${escapeHtml(msg.senderName)}</div>` : '';
 
-    let contentHtml = `<div class="text">${msg.content.replace(/\n/g, '<br>')}</div>`;
+    let contentHtml = `<div class="text">${escapeHtml(msg.content).replace(/\n/g, '<br>')}</div>`;
     if (msg.type === 'image') contentHtml = '<div class="media">[图片]</div>';
     else if (msg.type === 'voice') contentHtml = '<div class="media">[语音]</div>';
     else if (msg.type === 'video') contentHtml = '<div class="media">[视频]</div>';
@@ -51,7 +65,7 @@ export const exportSessionToHtml = (session: ChatSession): string => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${name} - 微信聊天记录</title>
+    <title>${escapeHtml(name)} - 微信聊天记录</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -177,7 +191,7 @@ export const exportSessionToHtml = (session: ChatSession): string => {
 </head>
 <body>
     <div class="container">
-        <header>${name}</header>
+        <header>${escapeHtml(name)}</header>
         <div class="chat-area">
             ${messagesHtml}
         </div>

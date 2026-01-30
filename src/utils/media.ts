@@ -53,7 +53,7 @@ export const decryptDatImage = (buffer: Uint8Array): { blob: Blob; extension: st
  * Note: Silk decoding typically requires a native library or a more complex WASM module.
  * For now, this is a placeholder for future implementation.
  */
-export const processVoiceMessage = async (buffer: ArrayBuffer): Promise<string> => {
+export const processVoiceMessage = async (_buffer: ArrayBuffer): Promise<string> => {
   // TODO: Implement Silk to MP3/WAV conversion
   console.warn('Voice conversion not yet implemented');
   return '';

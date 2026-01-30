@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
-import { Upload, MessageCircle, Search, Download, FileText, Users, ChevronLeft, X, Filter, User, Terminal, Key, Database, ArrowRight, CheckCircle, Copy, ExternalLink, Image as ImageIcon, FileCode } from 'lucide-react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { Upload, MessageCircle, Search, Download, FileText, Users, ChevronLeft, X, Filter, User, Terminal, Key, Database, ArrowRight, CheckCircle, Copy, Image as ImageIcon, FileCode } from 'lucide-react'
 import { parseFile } from './utils/parser'
 import { decryptDatImage } from './utils/media'
 import { exportSessionToHtml } from './utils/exporter'
@@ -18,13 +18,19 @@ function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('home')
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [mediaMap, setMediaMap] = useState<Record<string, string>>({})
+  const mediaMapRef = useRef<Record<string, string>>({})
 
-  // Cleanup object URLs to avoid memory leaks
+  // Keep ref in sync with state for cleanup
+  useEffect(() => {
+    mediaMapRef.current = mediaMap
+  }, [mediaMap])
+
+  // Cleanup object URLs only on unmount
   useEffect(() => {
     return () => {
-      Object.values(mediaMap).forEach(url => URL.revokeObjectURL(url))
+      Object.values(mediaMapRef.current).forEach(url => URL.revokeObjectURL(url))
     }
-  }, [mediaMap])
+  }, [])
 
   // Copy command to clipboard
   const copyCommand = useCallback((command: string, id: string) => {
