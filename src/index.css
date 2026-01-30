@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* WeChat Green Theme */
+  --primary: 142 71% 45%;
+  --primary-foreground: 0 0% 100%;
+  --primary-light: 142 71% 55%;
+  --primary-dark: 142 71% 35%;
+  
+  --background: 0 0% 98%;
+  --foreground: 0 0% 12%;
+  
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 12%;
+  
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  
+  --accent: 142 50% 95%;
+  --accent-foreground: 142 71% 35%;
+  
+  --border: 0 0% 90%;
+  --ring: 142 71% 45%;
+  
+  /* Chat Bubbles */
+  --bubble-self: 100 80% 85%; /* #95ec69 */
+  --bubble-other: 0 0% 100%;
+  --bubble-self-foreground: 0 0% 10%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 0 0% 8%;
+    --foreground: 0 0% 95%;
+    
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
+    
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    
+    --accent: 142 30% 15%;
+    --accent-foreground: 142 71% 65%;
+    
+    --border: 0 0% 20%;
+    
+    --bubble-self: 142 40% 30%;
+    --bubble-self-foreground: 0 0% 100%;
+    --bubble-other: 0 0% 18%;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Utility Classes */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 
+           bg-primary text-primary-foreground font-medium rounded-xl
+           transition-all duration-200 ease-out
+           hover:bg-primary-dark hover:shadow-soft
+           active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+           bg-muted text-foreground font-medium rounded-xl
+           border border-border
+           transition-all duration-200 ease-out
+           hover:bg-accent hover:border-primary/30
+           active:scale-[0.98];
+  }
+  
+  .card {
+    @apply bg-card text-card-foreground rounded-2xl border border-border
+           shadow-card transition-all duration-200;
+  }
+  
+  .input {
+    @apply w-full px-4 py-2.5 bg-muted border border-border rounded-xl
+           text-foreground placeholder:text-muted-foreground
+           focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent
+           transition-all duration-200;
+  }
+  
+  .chat-bubble-self {
+    @apply bg-bubble-self text-bubble-self-foreground rounded-lg rounded-tr-none
+           px-4 py-2.5 max-w-[85%] break-words shadow-sm relative;
+  }
+  
+  .chat-bubble-self::after {
+    content: '';
+    @apply absolute -right-2 top-3 w-0 h-0 border-[6px] border-transparent 
+           border-l-bubble-self;
+  }
+  
+  .chat-bubble-other {
+    @apply bg-bubble-other text-card-foreground rounded-lg rounded-tl-none
+           px-4 py-2.5 max-w-[85%] break-words shadow-sm border border-border relative;
+  }
+
+  .chat-bubble-other::after {
+    content: '';
+    @apply absolute -left-2 top-3 w-0 h-0 border-[6px] border-transparent 
+           border-r-bubble-other;
+  }
+}

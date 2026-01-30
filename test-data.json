@@ -1,0 +1,24 @@
+[
+  {
+    "name": "张三",
+    "isGroup": false,
+    "messages": [
+      {"id": "1", "content": "你好！最近怎么样？", "timestamp": 1706601600000, "isSelf": false, "senderName": "张三"},
+      {"id": "2", "content": "挺好的，你呢？", "timestamp": 1706601660000, "isSelf": true, "senderName": "我"},
+      {"id": "3", "content": "我也不错，周末有空吗？一起吃个饭", "timestamp": 1706601720000, "isSelf": false, "senderName": "张三"},
+      {"id": "4", "content": "好啊，周六中午可以吗？", "timestamp": 1706601780000, "isSelf": true, "senderName": "我"},
+      {"id": "5", "content": "没问题，到时候见！", "timestamp": 1706601840000, "isSelf": false, "senderName": "张三"}
+    ]
+  },
+  {
+    "name": "工作群",
+    "isGroup": true,
+    "messages": [
+      {"id": "6", "content": "大家好，明天的会议改到下午3点", "timestamp": 1706688000000, "isSelf": false, "senderName": "李经理"},
+      {"id": "7", "content": "收到", "timestamp": 1706688060000, "isSelf": true, "senderName": "我"},
+      {"id": "8", "content": "好的，明白了", "timestamp": 1706688120000, "isSelf": false, "senderName": "王工"},
+      {"id": "9", "content": "请大家提前准备好项目进度报告", "timestamp": 1706688180000, "isSelf": false, "senderName": "李经理"},
+      {"id": "10", "content": "OK", "timestamp": 1706688240000, "isSelf": true, "senderName": "我"}
+    ]
+  }
+]

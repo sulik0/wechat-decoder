@@ -1,0 +1,72 @@
+[
+  {
+    "localId": 1,
+    "MsgSvrID": "8234567890123456789",
+    "Type": 1,
+    "IsSend": 0,
+    "CreateTime": 1706601600,
+    "StrTalker": "wxid_abc123",
+    "StrContent": "你好，最近怎么样？",
+    "NickName": "张三"
+  },
+  {
+    "localId": 2,
+    "MsgSvrID": "8234567890123456790",
+    "Type": 1,
+    "IsSend": 1,
+    "CreateTime": 1706601660,
+    "StrTalker": "wxid_abc123",
+    "StrContent": "挺好的，你呢？",
+    "NickName": "张三"
+  },
+  {
+    "localId": 3,
+    "MsgSvrID": "8234567890123456791",
+    "Type": 1,
+    "IsSend": 0,
+    "CreateTime": 1706601720,
+    "StrTalker": "wxid_abc123",
+    "StrContent": "我也不错，周末有空吗？",
+    "NickName": "张三"
+  },
+  {
+    "localId": 4,
+    "MsgSvrID": "8234567890123456792",
+    "Type": 3,
+    "IsSend": 1,
+    "CreateTime": 1706601780,
+    "StrTalker": "wxid_abc123",
+    "StrContent": "[图片]",
+    "NickName": "张三"
+  },
+  {
+    "localId": 5,
+    "MsgSvrID": "8234567890123456793",
+    "Type": 10000,
+    "IsSend": 0,
+    "CreateTime": 1706601840,
+    "StrTalker": "wxid_abc123",
+    "StrContent": "你已添加了张三，现在可以开始聊天了",
+    "NickName": ""
+  },
+  {
+    "localId": 6,
+    "MsgSvrID": "8234567890123456794",
+    "Type": 1,
+    "IsSend": 0,
+    "CreateTime": 1706688000,
+    "StrTalker": "12345678@chatroom",
+    "StrContent": "大家好，明天的会议改到下午3点",
+    "NickName": "李经理"
+  },
+  {
+    "localId": 7,
+    "MsgSvrID": "8234567890123456795",
+    "Type": 1,
+    "IsSend": 1,
+    "CreateTime": 1706688060,
+    "StrTalker": "12345678@chatroom",
+    "StrContent": "收到，谢谢通知",
+    "NickName": ""
+  }
+]
